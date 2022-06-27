@@ -253,7 +253,7 @@ class PostViewTests(TestCase):
         """
         Подписанный юзер видит контент и отписывается.
         """
-        post2 = Post.objects.create(
+        Post.objects.create(
             author=PostViewTests.user2,
             text='Тестовый пост2',
         )

@@ -23,17 +23,17 @@ class PostURLTests(TestCase):
             author=cls.user,
             text='Тестовый пост. Тестовый пост'
         )
-        cls.public_url = ( 
-            ('/', 'posts/index.html'), 
-            ('/group/test-slug/', 'posts/group_list.html'), 
-            ('/profile/HasNoName/', 'posts/profile.html'), 
-            ('/posts/1/', 'posts/post_detail.html'), 
-        ) 
+        cls.public_url = (
+            ('/', 'posts/index.html'),
+            ('/group/test-slug/', 'posts/group_list.html'),
+            ('/profile/HasNoName/', 'posts/profile.html'),
+            ('/posts/1/', 'posts/post_detail.html'),
+        )
 
-        cls.private_url = ( 
-            ('/create/', 'posts/create_post.html'), 
+        cls.private_url = (
+            ('/create/', 'posts/create_post.html'),
             ('/posts/1/edit/', 'posts/create_post.html'),
-            ('/follow/', 'posts/follow.html') 
+            ('/follow/', 'posts/follow.html')
         ) 
 
     def setUp(self):

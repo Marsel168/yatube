@@ -59,7 +59,7 @@ class Comment(CreatedModel):
         verbose_name='Автор'
     )
     text = models.TextField('Комментарий')
-    
+
     def __str__(self):
         return self.text[:15]
 
@@ -84,6 +84,6 @@ class Follow(models.Model):
             fields=['user', 'author'],
         ),)
         models.CheckConstraint(
-                check=~models.Q(user=models.F('author')),
-                name='non_self_follow'
-         )
+            check=~models.Q(user=models.F('author')),
+            name='non_self_follow'
+        )
