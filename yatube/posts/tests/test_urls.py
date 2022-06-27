@@ -34,7 +34,7 @@ class PostURLTests(TestCase):
             ('/create/', 'posts/create_post.html'),
             ('/posts/1/edit/', 'posts/create_post.html'),
             ('/follow/', 'posts/follow.html')
-        ) 
+        )
 
     def setUp(self):
         self.user = User.objects.get(username='HasNoName')

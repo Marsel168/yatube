@@ -66,7 +66,7 @@ class PostModelTest(TestCase):
                 self.assertEqual(
                     group._meta.get_field(field).verbose_name, expected_value
                 )
-        
+
         comment = PostModelTest.comment
         field_verboses = (
             ('text', 'Комментарий'),
