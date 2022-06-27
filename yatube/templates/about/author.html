@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+  <div class="row">
+    <h1>Привет, я автор</h1>
+    <div class="col-4 col-md-4">
+      <img src="{% static 'img/ava.jpg' %}" width="270" height="270"
+           class="rounded-circle">
+    </div>
+    <div class="col-8 col-md-8">
+      <p>
+        Привет, меня зовут Марсель. Мне 24 года. Я из г.Казань.
+        Люблю гулять в парках, кататься на велосипеде,
+        смотреть фильмы.
+      </p>
+      <div class="row mt-1 p-4">
+        <ul class="list-group list-group-horizontal mx-auto" style="width: 300px">
+          <li class="list-inline p-2">
+            <a href=""><img src="{% static 'img/github.png' %}" width="40"
+                          height="40" alt="github" class="rounded-circle"></a>
+          </li>
+          <li class="list-group p-2">
+            <a href=""><img src="{% static 'img/telegram.png' %}" width="40"
+                          height="40" alt="telegram" class="rounded-circle"></a>
+          </li>
+          <li class="list-group p-2">
+            <a href=""><img src="{% static 'img/inst.png' %}" width="40"
+                          height="40" alt="instagram" class="rounded-circle"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+{% endblock %} 
