@@ -22,7 +22,6 @@ class PostViewTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(username='HasNoName')
-        cls.user2 = User.objects.create_user(username='Follower')
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test-slug',
@@ -86,9 +85,8 @@ class PostViewTests(TestCase):
     def test_post_with_correct_context(self):
         """Картинка передается в списке контекста"""
         for num_page in range(4):
-            first_object = self.authorized_client.get(
-                PostViewTests.templates_pages_names[num_page][0]
-            ).context.get('post')
+            url, _ = PostViewTests.templates_pages_names[num_page]
+            first_object = self.authorized_client.get(url).context.get('post')
             self.assertEqual(first_object.image, self.post.image)
 
     def test_pages_uses_correct_template(self):
@@ -100,9 +98,8 @@ class PostViewTests(TestCase):
 
     def test_index_page_show_correct_context(self):
         """Шаблон index сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[0][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[0]
+        response = self.authorized_client.get(url)
         first_object = response.context.get('post')
         context = (
             (first_object.text, PostViewTests.post.text),
@@ -114,9 +111,8 @@ class PostViewTests(TestCase):
 
     def test_group_list_page_show_correct_context(self):
         """Шаблон group_list сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[1][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[1]
+        response = self.authorized_client.get(url)
         group = response.context.get('group')
         context = (
             (group.title, PostViewTests.group.title),
@@ -127,9 +123,8 @@ class PostViewTests(TestCase):
 
     def test_profile_page_show_correct_context(self):
         """Шаблон profile сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[2][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[2]
+        response = self.authorized_client.get(url)
         context = (
             (response.context.get('user').username,
              PostViewTests.user.username),
@@ -138,9 +133,8 @@ class PostViewTests(TestCase):
 
     def test_post_detail_pages_show_correct_context(self):
         """Шаблон post_detail сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[3][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[3]
+        response = self.authorized_client.get(url)
         context = (
             (response.context.get('post').text, PostViewTests.post.text),
             (response.context.get('post').author, PostViewTests.post.author),
@@ -153,9 +147,8 @@ class PostViewTests(TestCase):
 
     def test_post_create_show_correct_context(self):
         """Шаблон post_create сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[4][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[4]
+        response = self.authorized_client.get(url)
         form_fields = (
             ('text', forms.fields.CharField),
             ('group', forms.fields.ChoiceField),
@@ -170,9 +163,8 @@ class PostViewTests(TestCase):
 
     def test_post_edit_show_correct_context(self):
         """Шаблон post_edit сформирован с правильным контекстом."""
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[5][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[5]
+        response = self.authorized_client.get(url)
         form_fields = (
             ('text', forms.fields.CharField),
             ('group', forms.fields.ChoiceField),
@@ -190,21 +182,18 @@ class PostViewTests(TestCase):
         self.assertTrue(response.context.get('is_edit'))
 
     def test_create_post_appear_in_index(self):
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[0][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[0]
+        response = self.authorized_client.get(url)
         self.assertEqual(len(response.context['page_obj']), 1)
 
     def test_create_post_appear_in_group_list(self):
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[1][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[1]
+        response = self.authorized_client.get(url)
         self.assertEqual(len(response.context['page_obj']), 1)
 
     def test_create_post_appear_in_profile(self):
-        response = self.authorized_client.get(
-            PostViewTests.templates_pages_names[2][0]
-        )
+        url, _ = PostViewTests.templates_pages_names[2]
+        response = self.authorized_client.get(url)
         self.assertEqual(len(response.context['page_obj']), 1)
 
     def test_create_post_not_appear_in_group_list(self):
@@ -244,8 +233,9 @@ class PostViewTests(TestCase):
         Авторизованный пользователь может подписываться
         на других пользователей.
         """
+        user2 = User.objects.create_user(username='Follower')
         self.authorized_client.get(
-            reverse('posts:profile_follow', args=[self.user2])
+            reverse('posts:profile_follow', args=[user2])
         )
         self.assertEqual(Follow.objects.count(), 1)
 
@@ -253,13 +243,14 @@ class PostViewTests(TestCase):
         """
         Подписанный юзер видит контент и отписывается.
         """
+        user2 = User.objects.create_user(username='Follower')
         Post.objects.create(
-            author=PostViewTests.user2,
+            author=user2,
             text='Тестовый пост2',
         )
         follower = Follow.objects.create(
             user=PostViewTests.user,
-            author=PostViewTests.user2
+            author=user2
         )
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertEqual(len(response.context['page_obj']), 1)

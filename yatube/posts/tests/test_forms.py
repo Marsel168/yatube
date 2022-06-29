@@ -7,6 +7,7 @@ from django.urls import reverse
 from ..models import Post, Group, Comment
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -29,6 +30,7 @@ class PostFormTests(TestCase):
         self.user = User.objects.create_user(username='HasNoName')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        cache.clear()
 
     @classmethod
     def tearDownClass(cls):
@@ -67,9 +69,9 @@ class PostFormTests(TestCase):
         ))
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
-        self.assertEqual(str(post.author), 'HasNoName')
-        self.assertEqual(str(post.text), 'Тестовый текст')
-        self.assertEqual(str(post.image), 'posts/small.gif')
+        self.assertEqual(post.author, self.user)
+        self.assertEqual(post.text, 'Тестовый текст')
+        self.assertEqual(post.image, 'posts/small.gif')
 
     def test_create_post_anonymous(self):
         """Работа форм create_post с анонимным пользователем."""
@@ -113,8 +115,8 @@ class PostFormTests(TestCase):
         ))
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
-        self.assertEqual(str(post.author), 'HasNoName')
-        self.assertEqual(str(post.text), 'Тестовый текст изменен')
+        self.assertEqual(post.author, self.user)
+        self.assertEqual(post.text, 'Тестовый текст изменен')
 
     def test_edit_post_anonymous(self):
         """Работа форм edit_post с анонимным пользователем."""
@@ -156,7 +158,7 @@ class PostFormTests(TestCase):
         ))
         self.assertEqual(Comment.objects.count(), 1)
         comment = Comment.objects.first()
-        self.assertEqual(str(comment.text), 'Тестовый комментарий')
+        self.assertEqual(comment.text, 'Тестовый комментарий')
 
     def test_add_comment_anonymous(self):
         """Работа формы comment с анонимным пользователем."""
