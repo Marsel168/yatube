@@ -58,7 +58,6 @@ def post_detail(request, post_id):
         {
             'post': post,
             'form': form,
-            
         }
     )
 
@@ -104,7 +103,7 @@ def post_edit(request, post_id):
         files=request.FILES or None,
         instance=post
     )
-    if not request.method == 'POST' or  not form.is_valid():
+    if not request.method == 'POST' or not form.is_valid():
         return render(
             request,
             'posts/create_post.html',
